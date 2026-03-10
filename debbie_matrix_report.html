@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Debbie — Automotive Research Report</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --matrix-green: #00ff41;
+    --matrix-dim: #00b32c;
+    --matrix-dark: #003b0f;
+    --cyan: #00f5ff;
+    --cyan-dim: #007a82;
+    --bg: #000d02;
+    --bg2: #010f04;
+    --surface: #020e04;
+    --border: #00ff4122;
+    --border-bright: #00ff4155;
+    --text: #c8ffd4;
+    --text-dim: #5a8f65;
+    --red: #ff2952;
+    --amber: #ffb700;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Exo 2', sans-serif;
+    font-weight: 300;
+    line-height: 1.6;
+    padding: 20px;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Matrix rain canvas */
+  #matrix-canvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    opacity: 0.03;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .report-wrapper {
+    max-width: 780px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Scanline overlay */
+  .report-wrapper::before {
+    content: '';
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,255,65,0.015) 2px,
+      rgba(0,255,65,0.015) 4px
+    );
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── HEADER ── */
+  .report-header {
+    border: 1px solid var(--matrix-green);
+    padding: 0;
+    margin-bottom: 2px;
+    position: relative;
+    overflow: hidden;
+    animation: flicker 8s infinite;
+  }
+
+  .report-header::before {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 100%; height: 2px;
+    background: linear-gradient(90deg, transparent, var(--matrix-green), transparent);
+    animation: scan-line 3s linear infinite;
+  }
+
+  @keyframes scan-line {
+    0% { left: -100%; }
+    100% { left: 100%; }
+  }
+
+  @keyframes flicker {
+    0%, 95%, 100% { opacity: 1; }
+    96% { opacity: 0.85; }
+    97% { opacity: 1; }
+    98% { opacity: 0.9; }
+  }
+
+  .header-top {
+    background: linear-gradient(135deg, #000d02, #001a07);
+    padding: 28px 32px 20px;
+    border-bottom: 1px solid var(--border-bright);
+  }
+
+  .header-badge {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    color: var(--matrix-dim);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .header-badge span {
+    color: var(--matrix-green);
+    animation: blink 1.5s step-end infinite;
+  }
+
+  @keyframes blink {
+    50% { opacity: 0; }
+  }
+
+  .report-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 24px;
+    font-weight: 900;
+    color: var(--matrix-green);
+    text-shadow: 0 0 20px rgba(0,255,65,0.5), 0 0 40px rgba(0,255,65,0.2);
+    letter-spacing: 2px;
+    line-height: 1.2;
+    margin-bottom: 6px;
+  }
+
+  .report-subtitle {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+    color: var(--cyan);
+    letter-spacing: 2px;
+    text-shadow: 0 0 10px rgba(0,245,255,0.4);
+  }
+
+  .header-meta {
+    background: #000902;
+    padding: 12px 32px;
+    display: flex;
+    gap: 32px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+  }
+
+  .header-meta span { color: var(--matrix-green); }
+
+  /* ── DEBBIE INTRO ── */
+  .debbie-intro {
+    border: 1px solid var(--border-bright);
+    border-top: none;
+    background: linear-gradient(135deg, #000d02, #001205);
+    padding: 20px 32px;
+    margin-bottom: 2px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .debbie-avatar {
+    width: 48px;
+    height: 48px;
+    border: 2px solid var(--matrix-green);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Orbitron', monospace;
+    font-size: 18px;
+    font-weight: 900;
+    color: var(--matrix-green);
+    text-shadow: 0 0 15px rgba(0,255,65,0.7);
+    box-shadow: 0 0 20px rgba(0,255,65,0.2), inset 0 0 20px rgba(0,255,65,0.05);
+    flex-shrink: 0;
+    animation: pulse-ring 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse-ring {
+    0%, 100% { box-shadow: 0 0 20px rgba(0,255,65,0.2), inset 0 0 20px rgba(0,255,65,0.05); }
+    50% { box-shadow: 0 0 30px rgba(0,255,65,0.4), inset 0 0 20px rgba(0,255,65,0.1); }
+  }
+
+  .debbie-text {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+    color: var(--text-dim);
+    line-height: 1.8;
+  }
+
+  .debbie-text strong {
+    color: var(--matrix-green);
+    display: block;
+    font-size: 13px;
+    margin-bottom: 2px;
+  }
+
+  /* ── SECTIONS ── */
+  .section {
+    border: 1px solid var(--border);
+    border-top: none;
+    background: var(--surface);
+    margin-bottom: 2px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .section::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px; height: 100%;
+    background: var(--matrix-green);
+    opacity: 0.6;
+  }
+
+  .section-header {
+    padding: 14px 32px;
+    background: linear-gradient(90deg, #001a07, transparent);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .section-num {
+    font-family: 'Orbitron', monospace;
+    font-size: 10px;
+    color: var(--matrix-dim);
+    letter-spacing: 2px;
+  }
+
+  .section-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--matrix-green);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    text-shadow: 0 0 10px rgba(0,255,65,0.3);
+  }
+
+  .section-body {
+    padding: 24px 32px;
+  }
+
+  .section-body p {
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.8;
+    margin-bottom: 12px;
+  }
+
+  .section-body p:last-child { margin-bottom: 0; }
+
+  /* ── METHODOLOGY TABLE ── */
+  .method-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+  }
+
+  .method-cell {
+    background: #000d02;
+    border: 1px solid var(--border);
+    padding: 14px 18px;
+  }
+
+  .method-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+
+  .method-value {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 13px;
+    color: var(--cyan);
+    text-shadow: 0 0 8px rgba(0,245,255,0.3);
+  }
+
+  /* ── CHARTS ── */
+  .chart-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+    margin-bottom: 2px;
+  }
+
+  .chart-card {
+    border: 1px solid var(--border);
+    background: var(--surface);
+    padding: 20px 24px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .chart-card::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px; height: 100%;
+    background: var(--cyan);
+    opacity: 0.6;
+  }
+
+  .chart-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 10px;
+    color: var(--cyan);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    text-shadow: 0 0 8px rgba(0,245,255,0.3);
+  }
+
+  /* Bar chart */
+  .bar-chart { display: flex; flex-direction: column; gap: 8px; }
+
+  .bar-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .bar-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    color: var(--text-dim);
+    width: 100px;
+    flex-shrink: 0;
+    text-align: right;
+  }
+
+  .bar-track {
+    flex: 1;
+    height: 18px;
+    background: #000d02;
+    border: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--matrix-dark), var(--matrix-green));
+    box-shadow: 0 0 10px rgba(0,255,65,0.4);
+    position: relative;
+    animation: bar-grow 1.5s ease-out forwards;
+    transform-origin: left;
+  }
+
+  .bar-fill.cyan {
+    background: linear-gradient(90deg, #002a2e, var(--cyan));
+    box-shadow: 0 0 10px rgba(0,245,255,0.4);
+  }
+
+  .bar-fill.amber {
+    background: linear-gradient(90deg, #2a1a00, var(--amber));
+    box-shadow: 0 0 10px rgba(255,183,0,0.4);
+  }
+
+  @keyframes bar-grow {
+    from { width: 0 !important; }
+  }
+
+  .bar-fill::after {
+    content: '';
+    position: absolute;
+    top: 0; right: 0;
+    width: 2px; height: 100%;
+    background: white;
+    opacity: 0.6;
+  }
+
+  .bar-pct {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    color: var(--matrix-green);
+    width: 32px;
+    flex-shrink: 0;
+  }
+
+  /* Donut chart */
+  .donut-wrap {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .donut-svg { flex-shrink: 0; }
+
+  .donut-legend { flex: 1; display: flex; flex-direction: column; gap: 6px; }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    color: var(--text-dim);
+  }
+
+  .legend-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .legend-pct { color: var(--matrix-green); margin-left: auto; }
+
+  /* ── STAT CARDS ── */
+  .stat-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2px;
+    margin-bottom: 2px;
+  }
+
+  .stat-card {
+    border: 1px solid var(--border);
+    background: var(--surface);
+    padding: 18px 16px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .stat-card::before {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--matrix-green);
+    opacity: 0.5;
+  }
+
+  .stat-num {
+    font-family: 'Orbitron', monospace;
+    font-size: 28px;
+    font-weight: 900;
+    color: var(--matrix-green);
+    text-shadow: 0 0 20px rgba(0,255,65,0.6);
+    display: block;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+
+  .stat-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 9px;
+    color: var(--text-dim);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+  }
+
+  /* ── VERBATIMS ── */
+  .verbatim {
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--matrix-green);
+    background: #000902;
+    padding: 16px 20px;
+    margin-bottom: 8px;
+    position: relative;
+  }
+
+  .verbatim::before {
+    content: '"';
+    font-family: 'Orbitron', monospace;
+    font-size: 40px;
+    color: var(--matrix-green);
+    opacity: 0.15;
+    position: absolute;
+    top: -5px; left: 12px;
+    line-height: 1;
+  }
+
+  .verbatim p {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+    color: var(--text);
+    line-height: 1.7;
+    font-style: italic;
+    padding-left: 8px;
+  }
+
+  /* ── RECOMMENDATIONS ── */
+  .rec-card {
+    border: 1px solid var(--border);
+    background: #000902;
+    padding: 20px 24px;
+    margin-bottom: 8px;
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+
+  .rec-num {
+    font-family: 'Orbitron', monospace;
+    font-size: 28px;
+    font-weight: 900;
+    color: var(--border-bright);
+    line-height: 1;
+    flex-shrink: 0;
+    text-shadow: 0 0 15px rgba(0,255,65,0.2);
+  }
+
+  .rec-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--cyan);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    text-shadow: 0 0 8px rgba(0,245,255,0.3);
+  }
+
+  .rec-body {
+    font-size: 12px;
+    color: var(--text-dim);
+    line-height: 1.7;
+  }
+
+  /* ── FOOTER ── */
+  .report-footer {
+    border: 1px solid var(--border);
+    border-top: 2px solid var(--matrix-green);
+    background: #000902;
+    padding: 16px 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 2px;
+  }
+
+  .footer-left {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    color: var(--text-dim);
+    line-height: 1.8;
+  }
+
+  .footer-left strong { color: var(--matrix-green); }
+
+  .footer-right {
+    font-family: 'Orbitron', monospace;
+    font-size: 9px;
+    color: var(--matrix-dim);
+    letter-spacing: 2px;
+    text-align: right;
+  }
+</style>
+</head>
+<body>
+
+<canvas id="matrix-canvas"></canvas>
+
+<div class="report-wrapper">
+
+  <!-- HEADER -->
+  <div class="report-header">
+    <div class="header-top">
+      <div class="header-badge">SYSTEM: DEBBIE_AI v2.6 &nbsp;|&nbsp; STATUS: <span>● ACTIVE</span> &nbsp;|&nbsp; CLEARANCE: RESEARCH-EXEC</div>
+      <div class="report-title">U.S. AUTOMOTIVE<br>PURCHASE STUDY 2026</div>
+      <div class="report-subtitle">// EXECUTIVE RESEARCH REPORT — FINAL RELEASE</div>
+    </div>
+    <div class="header-meta">
+      <div>SAMPLE <span>n=1,000</span></div>
+      <div>MODE <span>ONLINE SURVEY</span></div>
+      <div>POPULATION <span>U.S. ADULTS 18+</span></div>
+      <div>FIELDED <span>MARCH 2026</span></div>
+    </div>
+  </div>
+
+  <!-- DEBBIE -->
+  <div class="debbie-intro">
+    <div class="debbie-avatar">D</div>
+    <div class="debbie-text">
+      <strong>DEBBIE // AI-POWERED MARKET RESEARCH ANALYST</strong>
+      Fieldwork is complete. Full sample of n=1,000 confirmed. Initiating final report sequence. All findings below are derived from correlated synthetic data reflecting U.S. nat-rep automotive purchase behavior, March 2026.
+    </div>
+  </div>
+
+  <!-- STAT CARDS -->
+  <div class="stat-row">
+    <div class="stat-card">
+      <span class="stat-num">1K</span>
+      <span class="stat-label">Total Responses</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-num">45%</span>
+      <span class="stat-label">Open to New/Used</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-num">58%</span>
+      <span class="stat-label">Budget Under $35K</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-num">50%</span>
+      <span class="stat-label">Price Pain Points</span>
+    </div>
+  </div>
+
+  <!-- EXEC SUMMARY -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">01 //</span>
+      <span class="section-title">Executive Summary</span>
+    </div>
+    <div class="section-body">
+      <p>The U.S. automotive purchase landscape in 2026 is defined by a <strong style="color:var(--matrix-green)">value-conscious, digitally empowered consumer</strong> who demands transparency, flexibility, and a low-friction buying experience. Nearly half of in-market shoppers remain open to both new and used vehicles, and the majority are operating within a sub-$35K budget — signaling that affordability and perceived value are the primary purchase drivers.</p>
+      <p>Price negotiation and fee opacity are the dominant pain points, cited collectively by <strong style="color:var(--matrix-green)">50% of all respondents</strong>, underscoring a systemic trust gap between consumers and the traditional dealership model. Brands and dealers that prioritize transparent pricing, streamlined digital purchasing pathways, and honest trade-in processes will be best positioned to convert this highly engaged but skeptical buyer pool.</p>
+    </div>
+  </div>
+
+  <!-- METHODOLOGY -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">02 //</span>
+      <span class="section-title">Methodology</span>
+    </div>
+    <div class="section-body">
+      <div class="method-grid">
+        <div class="method-cell"><div class="method-label">Sample Size</div><div class="method-value">n=1,000</div></div>
+        <div class="method-cell"><div class="method-label">Survey Mode</div><div class="method-value">Online</div></div>
+        <div class="method-cell"><div class="method-label">Target Population</div><div class="method-value">U.S. Adults 18+ In-Market</div></div>
+        <div class="method-cell"><div class="method-label">Field Period</div><div class="method-value">March 2026</div></div>
+        <div class="method-cell"><div class="method-label">Geography</div><div class="method-value">United States (Nat-Rep)</div></div>
+        <div class="method-cell"><div class="method-label">Screener</div><div class="method-value">Active Purchase Intent 12mo</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHARTS ROW 1 -->
+  <div class="chart-grid">
+    <div class="chart-card">
+      <div class="chart-title">// Budget Distribution</div>
+      <div class="bar-chart">
+        <div class="bar-row"><span class="bar-label">Under $15K</span><div class="bar-track"><div class="bar-fill" style="width:12%"></div></div><span class="bar-pct">12%</span></div>
+        <div class="bar-row"><span class="bar-label">$15K–$24.9K</span><div class="bar-track"><div class="bar-fill" style="width:22%"></div></div><span class="bar-pct">22%</span></div>
+        <div class="bar-row"><span class="bar-label">$25K–$34.9K</span><div class="bar-track"><div class="bar-fill" style="width:24%"></div></div><span class="bar-pct">24%</span></div>
+        <div class="bar-row"><span class="bar-label">$35K–$49.9K</span><div class="bar-track"><div class="bar-fill" style="width:20%"></div></div><span class="bar-pct">20%</span></div>
+        <div class="bar-row"><span class="bar-label">$50K–$74.9K</span><div class="bar-track"><div class="bar-fill" style="width:13%"></div></div><span class="bar-pct">13%</span></div>
+        <div class="bar-row"><span class="bar-label">$75K+</span><div class="bar-track"><div class="bar-fill" style="width:6%"></div></div><span class="bar-pct">6%</span></div>
+      </div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">// Powertrain Preference</div>
+      <div class="bar-chart">
+        <div class="bar-row"><span class="bar-label">Gasoline</span><div class="bar-track"><div class="bar-fill" style="width:45%"></div></div><span class="bar-pct">45%</span></div>
+        <div class="bar-row"><span class="bar-label">Hybrid</span><div class="bar-track"><div class="bar-fill cyan" style="width:22%"></div></div><span class="bar-pct" style="color:var(--cyan)">22%</span></div>
+        <div class="bar-row"><span class="bar-label">Plug-in Hybrid</span><div class="bar-track"><div class="bar-fill cyan" style="width:10%"></div></div><span class="bar-pct" style="color:var(--cyan)">10%</span></div>
+        <div class="bar-row"><span class="bar-label">Full EV</span><div class="bar-track"><div class="bar-fill cyan" style="width:13%"></div></div><span class="bar-pct" style="color:var(--cyan)">13%</span></div>
+        <div class="bar-row"><span class="bar-label">No Preference</span><div class="bar-track"><div class="bar-fill" style="width:10%;opacity:0.4"></div></div><span class="bar-pct">10%</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHARTS ROW 2 -->
+  <div class="chart-grid">
+    <div class="chart-card">
+      <div class="chart-title">// New vs. Used Preference</div>
+      <div class="donut-wrap">
+        <svg class="donut-svg" width="110" height="110" viewBox="0 0 110 110">
+          <circle cx="55" cy="55" r="40" fill="none" stroke="#001a07" stroke-width="18"/>
+          <!-- Open to both 45% -->
+          <circle cx="55" cy="55" r="40" fill="none" stroke="#00ff41" stroke-width="18"
+            stroke-dasharray="113.1 138.9" stroke-dashoffset="0" opacity="0.9"/>
+          <!-- New only 30% -->
+          <circle cx="55" cy="55" r="40" fill="none" stroke="#00f5ff" stroke-width="18"
+            stroke-dasharray="75.4 176.6" stroke-dashoffset="-113.1" opacity="0.9"/>
+          <!-- Used only 25% -->
+          <circle cx="55" cy="55" r="40" fill="none" stroke="#ffb700" stroke-width="18"
+            stroke-dasharray="62.8 189.2" stroke-dashoffset="-188.5" opacity="0.9"/>
+          <text x="55" y="50" text-anchor="middle" font-family="Orbitron" font-size="14" font-weight="900" fill="#00ff41">45%</text>
+          <text x="55" y="64" text-anchor="middle" font-family="Share Tech Mono" font-size="8" fill="#5a8f65">OPEN</text>
+        </svg>
+        <div class="donut-legend">
+          <div class="legend-item"><div class="legend-dot" style="background:#00ff41;box-shadow:0 0 6px #00ff41"></div>Open to Both<span class="legend-pct">45%</span></div>
+          <div class="legend-item"><div class="legend-dot" style="background:#00f5ff;box-shadow:0 0 6px #00f5ff"></div>New Only<span class="legend-pct" style="color:var(--cyan)">30%</span></div>
+          <div class="legend-item"><div class="legend-dot" style="background:#ffb700;box-shadow:0 0 6px #ffb700"></div>Used Only<span class="legend-pct" style="color:var(--amber)">25%</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">// Top Pain Points</div>
+      <div class="bar-chart">
+        <div class="bar-row"><span class="bar-label">Price Negotiation</span><div class="bar-track"><div class="bar-fill amber" style="width:28%"></div></div><span class="bar-pct" style="color:var(--amber)">28%</span></div>
+        <div class="bar-row"><span class="bar-label">Fee Transparency</span><div class="bar-track"><div class="bar-fill amber" style="width:22%"></div></div><span class="bar-pct" style="color:var(--amber)">22%</span></div>
+        <div class="bar-row"><span class="bar-label">Inventory Online</span><div class="bar-track"><div class="bar-fill" style="width:16%"></div></div><span class="bar-pct">16%</span></div>
+        <div class="bar-row"><span class="bar-label">Financing Terms</span><div class="bar-track"><div class="bar-fill" style="width:14%"></div></div><span class="bar-pct">14%</span></div>
+        <div class="bar-row"><span class="bar-label">Model Comparison</span><div class="bar-track"><div class="bar-fill" style="width:10%"></div></div><span class="bar-pct">10%</span></div>
+        <div class="bar-row"><span class="bar-label">Trade-In Value</span><div class="bar-track"><div class="bar-fill" style="width:7%"></div></div><span class="bar-pct">7%</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- KEY FINDINGS -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">03 //</span>
+      <span class="section-title">Key Findings</span>
+    </div>
+    <div class="section-body">
+      <p><strong style="color:var(--cyan)">PURCHASE DRIVERS & TIMELINE —</strong> The study sample reflects a broad and demographically diverse in-market audience, with the highest concentration of active shoppers in the 25–34 age cohort (22%), followed closely by the 35–44 segment (20%). The majority of respondents are shopping within a 3–6 month window, suggesting an active and engaged buyer pool ready to convert with the right offer.</p>
+      <p><strong style="color:var(--cyan)">BUDGET & FINANCING —</strong> The majority of consumers (58%) are budgeting under $35,000, with the $25K–$34,999 range being the single largest budget tier at 24%. Bank and credit union loans dominate financing at 38%, suggesting consumers are arriving with pre-arranged financing and reduced reliance on dealer F&I departments.</p>
+      <p><strong style="color:var(--cyan)">POWERTRAIN TRENDS —</strong> Gasoline remains dominant at 45%, but the electrification signal is clear — 45% of shoppers are considering some form of electrified powertrain combined. Fully electric consideration sits at 13%, concentrated among higher-budget and younger shoppers, indicating EV demand is real but still stratified by income and age.</p>
+      <p><strong style="color:var(--cyan)">CONSUMER PAIN POINTS —</strong> Price negotiation (28%) and fee transparency (22%) together account for 50% of all pain points cited — a systemic trust deficit in the traditional dealership model and a clear opening for brands that lead with transparent, fixed-price purchasing experiences.</p>
+    </div>
+  </div>
+
+  <!-- VERBATIMS -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">04 //</span>
+      <span class="section-title">Verbatim Highlights</span>
+    </div>
+    <div class="section-body">
+      <div class="verbatim"><p>"More transparent pricing upfront would make a huge difference. I hate being surprised by fees at the dealership."</p></div>
+      <div class="verbatim"><p>"Fixed pricing like Tesla does it — no negotiation, no games."</p></div>
+      <div class="verbatim"><p>"Less pressure from sales staff. I want time to think without someone hovering over me."</p></div>
+      <div class="verbatim"><p>"The ability to fully complete the purchase online without stepping foot in a dealership."</p></div>
+      <div class="verbatim"><p>"More honest trade-in appraisals. I always feel like I'm getting lowballed."</p></div>
+    </div>
+  </div>
+
+  <!-- RECOMMENDATIONS -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">05 //</span>
+      <span class="section-title">Strategic Recommendations</span>
+    </div>
+    <div class="section-body">
+      <div class="rec-card">
+        <div class="rec-num">01</div>
+        <div>
+          <div class="rec-title">Lead with Transparent, Fixed Pricing</div>
+          <div class="rec-body">With 50% of consumers citing price negotiation and hidden fees as their top frustrations, brands and dealers that adopt fixed, no-haggle pricing models will have a significant competitive advantage in converting this skeptical but engaged buyer pool.</div>
+        </div>
+      </div>
+      <div class="rec-card">
+        <div class="rec-num">02</div>
+        <div>
+          <div class="rec-title">Invest in End-to-End Digital Purchase Pathways</div>
+          <div class="rec-body">Consumers want to complete more of the purchase journey online. Dealers and OEMs that offer digital purchasing — including financing, trade-in valuation, and delivery — will capture the growing segment of buyers who want minimal dealership interaction.</div>
+        </div>
+      </div>
+      <div class="rec-card">
+        <div class="rec-num">03</div>
+        <div>
+          <div class="rec-title">Position Electrified Options at Every Budget Tier</div>
+          <div class="rec-body">With 45% of in-market shoppers open to electrified powertrains, EV and hybrid consideration is no longer niche. Brands should ensure electrified options are visible and comparable at every budget tier — not just premium — to capture the growing mid-market EV-curious buyer.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="report-footer">
+    <div class="footer-left">
+      <strong>DEBBIE</strong> // AI-Powered Market Research Analytics<br>
+      U.S. Automotive Purchase Study 2026 &nbsp;|&nbsp; March 2026 &nbsp;|&nbsp; CONFIDENTIAL
+    </div>
+    <div class="footer-right">
+      REPORT_ID: AUTO-2026-001<br>
+      GENERATED: <span id="ts"></span>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// Timestamp
+document.getElementById('ts').textContent = new Date().toLocaleString('en-US', {
+  month:'short', day:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit'
+});
+
+// Matrix rain
+const canvas = document.getElementById('matrix-canvas');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+const cols = Math.floor(canvas.width / 16);
+const drops = Array(cols).fill(1);
+const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*アイウエオカキクケコ';
+
+function drawMatrix() {
+  ctx.fillStyle = 'rgba(0,0,0,0.05)';
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+  ctx.fillStyle = '#00ff41';
+  ctx.font = '14px Share Tech Mono';
+  drops.forEach((y, i) => {
+    const char = chars[Math.floor(Math.random() * chars.length)];
+    ctx.fillText(char, i * 16, y * 16);
+    if (y * 16 > canvas.height && Math.random() > 0.975) drops[i] = 0;
+    drops[i]++;
+  });
+}
+setInterval(drawMatrix, 50);
+</script>
+</body>
+</html>
