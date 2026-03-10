@@ -1,0 +1,412 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>U.S. Automotive Purchase Study 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Inter:wght@300;400;500;600;700&family=Libre+Baskerville:ital@0;1&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:#F7F8FB;font-family:'Inter',sans-serif;color:#2D3142;margin:0;padding:0;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  
+  .page-wrap{max-width:900px;margin:0 auto;padding:0 24px 80px}
+  
+  /* Hero Section */
+  .hero{position:relative;min-height:92vh;display:flex;align-items:center;justify-content:center;overflow:hidden;background:linear-gradient(165deg,#0F2341 0%,#1A3A6B 40%,#234E8E 100%)}
+  .hero-grain{position:absolute;inset:0;opacity:.04;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")}
+  .hero-lines{position:absolute;inset:0;overflow:hidden}
+  .hero-lines svg{position:absolute;width:100%;height:100%}
+  .hero-content{position:relative;z-index:2;text-align:center;padding:40px 32px;max-width:720px}
+  .hero-badge{display:inline-block;padding:8px 20px;border:1px solid rgba(168,196,224,0.3);border-radius:100px;color:#8BB4DB;font-size:11px;font-weight:600;letter-spacing:3.5px;text-transform:uppercase;margin-bottom:40px;backdrop-filter:blur(4px)}
+  .hero h1{font-family:'DM Serif Display',serif;font-size:clamp(36px,6vw,58px);color:#FFFFFF;line-height:1.15;margin-bottom:20px;font-weight:400}
+  .hero h1 span{display:block;background:linear-gradient(90deg,#6CB4EE,#A8D8EA);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+  .hero-meta{color:#8BB4DB;font-size:14px;line-height:1.8;font-weight:400;letter-spacing:0.5px}
+  .hero-meta strong{color:#B8D4ED;font-weight:600}
+  .hero-scroll{position:absolute;bottom:40px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;color:#5A8AB5;font-size:11px;letter-spacing:2px;text-transform:uppercase;opacity:.7;animation:gentleBounce 2.5s ease-in-out infinite}
+  .hero-scroll .arrow{width:20px;height:20px;border-right:1.5px solid #5A8AB5;border-bottom:1.5px solid #5A8AB5;transform:rotate(45deg)}
+  @keyframes gentleBounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(8px)}}
+  
+  .hero-float-1{position:absolute;top:8%;right:6%;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,rgba(107,180,238,0.08) 0%,transparent 70%);animation:floatSlow 12s ease-in-out infinite}
+  .hero-float-2{position:absolute;bottom:15%;left:4%;width:260px;height:260px;border-radius:50%;background:radial-gradient(circle,rgba(168,216,234,0.06) 0%,transparent 70%);animation:floatSlow 16s ease-in-out infinite 3s}
+  @keyframes floatSlow{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-20px) scale(1.05)}}
+  
+  /* Section Styles */
+  .section{opacity:0;transform:translateY(40px);transition:opacity 0.8s cubic-bezier(0.25,0.46,0.45,0.94),transform 0.8s cubic-bezier(0.25,0.46,0.45,0.94);margin-bottom:0}
+  .section.visible{opacity:1;transform:translateY(0)}
+  
+  /* Spacing between sections */
+  .section-spacer{height:80px}
+  .section-spacer-lg{height:120px}
+  
+  /* Section Cards */
+  .card{background:#FFFFFF;border-radius:16px;padding:48px 44px;box-shadow:0 1px 3px rgba(0,0,0,0.04),0 8px 32px rgba(0,0,0,0.03);position:relative;overflow:hidden}
+  .card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,transparent);border-radius:16px 16px 0 0}
+  .card.accent-blue::before{background:linear-gradient(90deg,#2B5EA7,#5B9BD5)}
+  .card.accent-warm::before{background:linear-gradient(90deg,#D4915E,#E8B87A)}
+  .card.accent-amber::before{background:linear-gradient(90deg,#C49052,#D4A574)}
+  .card.accent-navy::before{background:linear-gradient(90deg,#1A3A6B,#2B5EA7)}
+  .card.accent-teal::before{background:linear-gradient(90deg,#2A7B88,#48A9B5)}
+  
+  .section-label{font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#7A8BA8;margin-bottom:14px}
+  .section-title{font-family:'DM Serif Display',serif;font-size:clamp(24px,3.5vw,32px);color:#1A2744;line-height:1.3;margin-bottom:24px;font-weight:400}
+  .section-body{font-family:'Inter',sans-serif;font-size:16px;color:#4A5568;line-height:1.9;font-weight:400}
+  
+  /* Stat Callouts */
+  .stat-row{display:flex;gap:24px;margin-top:32px;flex-wrap:wrap}
+  .stat-box{flex:1;min-width:140px;text-align:center;padding:28px 16px;background:#F7F9FC;border-radius:12px;border:1px solid #EDF1F7}
+  .stat-number{font-family:'DM Serif Display',serif;font-size:42px;color:#1A3A6B;line-height:1;margin-bottom:8px}
+  .stat-label{font-size:12px;color:#7A8BA8;font-weight:600;letter-spacing:1px;text-transform:uppercase;line-height:1.4}
+  
+  /* Charts */
+  .chart-container{position:relative;margin:32px auto 0;max-width:100%}
+  .chart-container canvas{max-height:340px}
+  
+  /* Key Findings */
+  .finding-card{background:linear-gradient(135deg,#F8FAFD 0%,#EEF3FA 100%);border-radius:14px;padding:36px 40px;margin-bottom:20px;border:1px solid #E2E9F3;position:relative;overflow:hidden}
+  .finding-number{font-family:'DM Serif Display',serif;font-size:64px;color:rgba(43,94,167,0.08);position:absolute;top:-4px;right:20px;line-height:1}
+  .finding-label{font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#5B9BD5;margin-bottom:12px}
+  .finding-text{font-family:'Inter',sans-serif;font-size:17px;color:#2D3142;line-height:1.85;font-weight:400}
+  
+  /* Verbatims */
+  .verbatim-block{position:relative;padding:32px 36px;margin-bottom:20px;background:linear-gradient(135deg,#FAFBFD 0%,#F4F7FB 100%);border-radius:14px;border:1px solid #E8ECF4}
+  .verbatim-block::before{content:'\201C';font-family:'DM Serif Display',serif;font-size:72px;color:rgba(43,94,167,0.1);position:absolute;top:-8px;left:20px;line-height:1}
+  .verbatim-text{font-family:'Libre Baskerville',serif;font-style:italic;font-size:16px;color:#3D4663;line-height:1.9;position:relative;z-index:1;padding-left:8px}
+  
+  /* Pain point styling */
+  .pain-highlight{background:linear-gradient(135deg,#FFF9F4 0%,#FDF4EC 100%);border:1px solid #F0DCC8}
+  .pain-highlight::before{color:rgba(196,144,82,0.15)}
+  .pain-highlight .section-label{color:#B8864E}
+  .pain-highlight .stat-box{background:#FFF9F4;border-color:#F0DCC8}
+  .pain-highlight .stat-number{color:#9B6B3A}
+  
+  /* Recommendation cards */
+  .rec-card{background:#FFFFFF;border-radius:14px;padding:36px 40px;margin-bottom:20px;border:1px solid #D8E1EE;position:relative;overflow:hidden;transition:box-shadow 0.3s ease}
+  .rec-card:hover{box-shadow:0 4px 20px rgba(26,58,107,0.08)}
+  .rec-icon{width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#1A3A6B,#2B5EA7);display:flex;align-items:center;justify-content:center;margin-bottom:20px}
+  .rec-icon svg{width:22px;height:22px}
+  .rec-number{font-family:'DM Serif Display',serif;font-size:13px;color:#5B9BD5;letter-spacing:2px;margin-bottom:8px}
+  .rec-text{font-family:'Inter',sans-serif;font-size:16px;color:#2D3142;line-height:1.85;font-weight:400}
+  
+  /* Divider */
+  .section-divider{width:60px;height:3px;background:linear-gradient(90deg,#5B9BD5,#A8D8EA);border-radius:4px;margin:0 auto}
+  
+  /* Ambient SVG decorations */
+  .ambient-dot{position:absolute;border-radius:50%;pointer-events:none}
+  
+  /* Footer */
+  .footer{text-align:center;padding:60px 20px 40px;position:relative}
+  .footer-line{width:40px;height:2px;background:#CBD5E0;margin:0 auto 24px;border-radius:2px}
+  .footer-text{font-size:12px;color:#9AA5B8;letter-spacing:1px;line-height:1.8}
+  .footer-text strong{font-weight:600;color:#7A8BA8}
+  
+  /* Mobile adjustments */
+  @media(max-width:640px){
+    .card{padding:32px 24px}
+    .finding-card{padding:28px 24px}
+    .verbatim-block{padding:28px 24px}
+    .rec-card{padding:28px 24px}
+    .stat-row{gap:12px}
+    .stat-box{padding:20px 12px}
+    .stat-number{font-size:32px}
+    .hero-content{padding:32px 20px}
+    .finding-number{font-size:48px}
+  }
+  
+  /* Count-up animation helper */
+  .count-up{display:inline-block}
+</style>
+</head>
+<body>
+
+<!-- ==================== HERO ==================== -->
+<section class="hero">
+  <div class="hero-grain"></div>
+  <div class="hero-lines">
+    <svg viewBox="0 0 900 900" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0 600 Q 200 550 450 580 Q 700 610 900 540" stroke="rgba(107,180,238,0.06)" stroke-width="1.5" fill="none"/>
+      <path d="M0 650 Q 250 600 500 640 Q 750 680 900 600" stroke="rgba(107,180,238,0.04)" stroke-width="1" fill="none"/>
+      <path d="M0 700 Q 300 660 550 700 Q 800 740 900 680" stroke="rgba(107,180,238,0.03)" stroke-width="1" fill="none"/>
+      <circle cx="120" cy="200" r="2" fill="rgba(168,216,234,0.15)"/>
+      <circle cx="780" cy="350" r="1.5" fill="rgba(168,216,234,0.12)"/>
+      <circle cx="650" cy="150" r="2.5" fill="rgba(168,216,234,0.08)"/>
+      <circle cx="300" cy="400" r="1.8" fill="rgba(168,216,234,0.1)"/>
+    </svg>
+  </div>
+  <div class="hero-float-1"></div>
+  <div class="hero-float-2"></div>
+  <div class="hero-content">
+    <div class="hero-badge">AI-Powered Market Research Analytics</div>
+    <h1>U.S. Automotive<br><span>Purchase Study 2026</span></h1>
+    <p class="hero-meta">Prepared by <strong>Debbie</strong> · March 2026 · <strong>n = 1,000</strong></p>
+  </div>
+  <div class="hero-scroll">
+    <span>Scroll</span>
+    <div class="arrow"></div>
+  </div>
+</section>
+
+<div class="page-wrap">
+
+<!-- ==================== SAMPLE OVERVIEW ==================== -->
+<div class="section-spacer-lg"></div>
+<div class="section">
+  <div class="card accent-blue">
+    <p class="section-label">Sample Overview</p>
+    <h2 class="section-title">A Balanced Cross-Generational Snapshot</h2>
+    <p class="section-body">The study captures a broad adult demographic with strongest representation among 25-44 year olds at 42% combined. Age distribution is relatively balanced, suggesting findings are applicable across generational segments with no single cohort dominating buyer intent.</p>
+    <div class="stat-row">
+      <div class="stat-box">
+        <div class="stat-number"><span class="count-up" data-target="1000">0</span></div>
+        <div class="stat-label">Respondents</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-number"><span class="count-up" data-target="42" data-suffix="%">0</span></div>
+        <div class="stat-label">Ages 25–44</div>
+      </div>
+    </div>
+    <div class="chart-container">
+      <canvas id="chartAge"></canvas>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== NEW VS USED ==================== -->
+<div class="section-spacer"></div>
+<div class="section">
+  <div class="card accent-warm">
+    <svg style="position:absolute;top:20px;right:20px;width:120px;height:120px;opacity:0.04" viewBox="0 0 120 120" fill="none"><circle cx="60" cy="60" r="55" stroke="#D4915E" stroke-width="2"/><circle cx="60" cy="60" r="35" stroke="#D4915E" stroke-width="1.5"/><circle cx="60" cy="60" r="15" stroke="#D4915E" stroke-width="1"/></svg>
+    <p class="section-label">New vs. Used Preference</p>
+    <h2 class="section-title">Flexibility Is the New Loyalty</h2>
+    <p class="section-body">Nearly half of buyers at 45% are open to both new and used vehicles, indicating price and value drive decisions more than vehicle status. Dealers and platforms that surface both options transparently are well-positioned to capture the largest buyer segment.</p>
+    <div class="stat-row">
+      <div class="stat-box">
+        <div class="stat-number"><span class="count-up" data-target="45" data-suffix="%">0</span></div>
+        <div class="stat-label">Open to Both</div>
+      </div>
+    </div>
+    <div class="chart-container">
+      <canvas id="chartNewUsed"></canvas>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== BUDGET ==================== -->
+<div class="section-spacer"></div>
+<div class="section">
+  <div class="card accent-blue">
+    <p class="section-label">Budget Distribution</p>
+    <h2 class="section-title">The Mid-Range Mass Market Sweet Spot</h2>
+    <p class="section-body">The $15K–$34.9K range captures 46% of respondents, establishing the mid-range as the core mass market sweet spot. Premium segments above $50K represent only 19% combined, suggesting aspirational but price-sensitive buyers dominate the current landscape.</p>
+    <div class="stat-row">
+      <div class="stat-box">
+        <div class="stat-number"><span class="count-up" data-target="46" data-suffix="%">0</span></div>
+        <div class="stat-label">$15K–$34.9K</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-number"><span class="count-up" data-target="19" data-suffix="%">0</span></div>
+        <div class="stat-label">$50K+</div>
+      </div>
+    </div>
+    <div class="chart-container">
+      <canvas id="chartBudget"></canvas>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== FINANCING ==================== -->
+<div class="section-spacer"></div>
+<div class="section">
+  <div class="card accent-teal">
+    <p class="section-label">Financing Preferences</p>
+    <h2 class="section-title">Buyers Prefer to Arrive Pre-Approved</h2>
+    <p class="section-body">Bank loans lead at 38%, reflecting consumer preference for pre-arranged financing over dealer control. The 25% relying on dealership financing still represents a significant revenue opportunity, but transparency in terms will be critical to conversion.</p>
+    <div class="stat-row">
+      <div class="stat-box">
+        <div class="stat-number"><span class="count-up" data-target="38" data-suffix="%">0</span></div>
+        <div class="stat-label">Bank Loans</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-number"><span class="count-up" data-target="25" data-suffix="%">0</span></div>
+        <div class="stat-label">Dealership</div>
+      </div>
+    </div>
+    <div class="chart-container">
+      <canvas id="chartFinance"></canvas>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== POWERTRAIN ==================== -->
+<div class="section-spacer"></div>
+<div class="section">
+  <div class="card accent-warm">
+    <p class="section-label">Powertrain Preference</p>
+    <h2 class="section-title">The Electrification Inflection Point</h2>
+    <p class="section-body">Gasoline remains dominant at 45% but electrified options combined including hybrid, PHEV, and EV reach 45% as well, signaling a market at an inflection point. Dealers and OEMs that invest in educating buyers on electrified options stand to capture a rapidly growing segment.</p>
+    <div class="stat-row">
+      <div class="stat-box">
+        <div class="stat-number"><span class="count-up" data-target="45" data-suffix="%">0</span></div>
+        <div class="stat-label">Gasoline</div>
+      </div>
+      <div class="stat-box" style="border-color:#D4E8D0;background:#F7FBF6">
+        <div class="stat-number" style="color:#4A8B3F"><span class="count-up" data-target="45" data-suffix="%">0</span></div>
+        <div class="stat-label" style="color:#5A9B4F">Electrified Combined</div>
+      </div>
+    </div>
+    <div class="chart-container">
+      <canvas id="chartPowertrain"></canvas>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== BODY STYLE ==================== -->
+<div class="section-spacer"></div>
+<div class="section">
+  <div class="card accent-blue">
+    <p class="section-label">Body Style Preference</p>
+    <h2 class="section-title">Utility Vehicles Continue to Dominate</h2>
+    <p class="section-body">SUVs and crossovers together command 52% of buyer preference, confirming the continued dominance of utility-oriented vehicles in the U.S. market. Trucks hold steady at 18%, reinforcing their role as a core segment especially among value-focused buyers.</p>
+    <div class="stat-row">
+      <div class="stat-box">
+        <div class="stat-number"><span class="count-up" data-target="52" data-suffix="%">0</span></div>
+        <div class="stat-label">SUVs + Crossovers</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-number"><span class="count-up" data-target="18" data-suffix="%">0</span></div>
+        <div class="stat-label">Trucks</div>
+      </div>
+    </div>
+    <div class="chart-container">
+      <canvas id="chartBody"></canvas>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== PAIN POINTS ==================== -->
+<div class="section-spacer-lg"></div>
+<div class="section">
+  <div class="section-divider" style="margin-bottom:40px"></div>
+</div>
+<div class="section">
+  <div class="card accent-amber pain-highlight">
+    <svg style="position:absolute;bottom:20px;right:20px;width:160px;height:160px;opacity:0.03" viewBox="0 0 160 160" fill="none"><polygon points="80,10 150,150 10,150" stroke="#C49052" stroke-width="2" fill="none"/><polygon points="80,40 130,140 30,140" stroke="#C49052" stroke-width="1.5" fill="none"/></svg>
+    <p class="section-label">Consumer Pain Points</p>
+    <h2 class="section-title">A Systemic Trust Deficit</h2>
+    <p class="section-body">Price negotiation frustration leads at 28% followed closely by fee transparency at 22%, together accounting for half of all pain points cited. This signals a systemic trust deficit in the traditional dealership buying process that is ripe for disruption.</p>
+    <div class="stat-row">
+      <div class="stat-box">
+        <div class="stat-number"><span class="count-up" data-target="28" data-suffix="%">0</span></div>
+        <div class="stat-label">Price Negotiation</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-number"><span class="count-up" data-target="22" data-suffix="%">0</span></div>
+        <div class="stat-label">Fee Transparency</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-number"><span class="count-up" data-target="50" data-suffix="%">0</span></div>
+        <div class="stat-label">Combined Top 2</div>
+      </div>
+    </div>
+    <div class="chart-container">
+      <canvas id="chartPain"></canvas>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== KEY FINDINGS ==================== -->
+<div class="section-spacer-lg"></div>
+<div class="section">
+  <div style="text-align:center;margin-bottom:48px">
+    <p class="section-label" style="text-align:center">Synthesis</p>
+    <h2 class="section-title" style="text-align:center;max-width:560px;margin:0 auto">Three Key Findings</h2>
+  </div>
+</div>
+
+<div class="section">
+  <div class="finding-card">
+    <div class="finding-number">01</div>
+    <p class="finding-label">Key Finding 1</p>
+    <p class="finding-text">The convergence of price negotiation and fee transparency as top pain points at a combined 50% reveals that consumer trust is the single biggest barrier to purchase satisfaction in today's automotive retail environment.</p>
+  </div>
+</div>
+
+<div class="section-spacer" style="height:20px"></div>
+<div class="section">
+  <div class="finding-card">
+    <div class="finding-number">02</div>
+    <p class="finding-label">Key Finding 2</p>
+    <p class="finding-text">With 45% of buyers open to both new and used vehicles and 46% budgeting between $15K and $34.9K, value optimization rather than brand loyalty is increasingly steering purchase decisions.</p>
+  </div>
+</div>
+
+<div class="section-spacer" style="height:20px"></div>
+<div class="section">
+  <div class="finding-card">
+    <div class="finding-number">03</div>
+    <p class="finding-label">Key Finding 3</p>
+    <p class="finding-text">Electrified powertrains now match gasoline in aggregate consumer consideration, suggesting the tipping point for mainstream EV and hybrid adoption is closer than traditional market assumptions indicate.</p>
+  </div>
+</div>
+
+<!-- ==================== VERBATIMS ==================== -->
+<div class="section-spacer-lg"></div>
+<div class="section">
+  <div style="text-align:center;margin-bottom:48px">
+    <p class="section-label" style="text-align:center">In Their Own Words</p>
+    <h2 class="section-title" style="text-align:center">Verbatim Highlights</h2>
+  </div>
+</div>
+
+<div class="section">
+  <div class="verbatim-block">
+    <p class="verbatim-text">"More transparent pricing upfront would make a huge difference. I hate being surprised by fees at the dealership."</p>
+  </div>
+</div>
+
+<div class="section-spacer" style="height:16px"></div>
+<div class="section">
+  <div class="verbatim-block">
+    <p class="verbatim-text">"Fixed pricing like Tesla does it — no negotiation, no games."</p>
+  </div>
+</div>
+
+<div class="section-spacer" style="height:16px"></div>
+<div class="section">
+  <div class="verbatim-block">
+    <p class="verbatim-text">"Less pressure from sales staff. I want time to think without someone hovering over me."</p>
+  </div>
+</div>
+
+<div class="section-spacer" style="height:16px"></div>
+<div class="section">
+  <div class="verbatim-block">
+    <p class="verbatim-text">"The ability to fully complete the purchase online without stepping foot in a dealership."</p>
+  </div>
+</div>
+
+<div class="section-spacer" style="height:16px"></div>
+<div class="section">
+  <div class="verbatim-block">
+    <p class="verbatim-text">"More honest trade-in appraisals. I always feel like I am getting lowballed."</p>
+  </div>
+</div>
+
+<!-- ==================== RECOMMENDATIONS ==================== -->
+<div class="section-spacer-lg"></div>
+<div class="section">
+  <div class="section-divider" style="margin-bottom:40px"></div>
+</div>
+<div class="section">
+  <div style="text-align:center;margin-bottom:48px">
+    <p class="section-label" style="text-align:center">What to Do Next</p>
+    <h2 class="section-title" style="text-align:center">Strategic Recommendations</h2>
+  </div>
+</div>
+
+<div class="section">
+  <div class="rec-card">
+    <div class="rec-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1v22"/><path d="M17 5H9
