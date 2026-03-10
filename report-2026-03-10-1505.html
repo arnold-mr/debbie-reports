@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>U.S. Automotive Purchase Study 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#f1f3f6;font-family:'DM Sans',sans-serif;color:#2a2a2a;-webkit-font-smoothing:antialiased}
+.page{max-width:900px;margin:0 auto;padding:48px 24px 32px}
+.fade-section{opacity:0;transform:translateY(28px);transition:opacity .7s ease,transform .7s ease}
+.fade-section.visible{opacity:1;transform:translateY(0)}
+
+/* HERO */
+.hero{background:linear-gradient(135deg,#0f2544 0%,#1a3a6a 60%,#264d8a 100%);padding:56px 48px 52px;border-radius:14px;margin-bottom:40px;position:relative;overflow:hidden}
+.hero::after{content:'';position:absolute;top:-40%;right:-10%;width:420px;height:420px;background:radial-gradient(circle,rgba(255,255,255,.04) 0%,transparent 70%);border-radius:50%}
+.hero-eyebrow{color:rgba(168,196,224,.8);font-size:11px;letter-spacing:4px;text-transform:uppercase;font-weight:500;margin-bottom:16px}
+.hero h1{font-family:'DM Serif Display',serif;color:#fff;font-size:36px;line-height:1.2;font-weight:400;margin-bottom:12px}
+.hero-meta{color:rgba(168,196,224,.75);font-size:13px;font-weight:400;letter-spacing:.3px}
+.hero-meta strong{color:rgba(255,255,255,.9);font-weight:500}
+.hero-divider{width:48px;height:3px;background:rgba(168,196,224,.35);border-radius:2px;margin:20px 0 16px}
+
+/* CARDS */
+.card{background:#fff;border-radius:12px;padding:36px 40px;margin-bottom:24px;box-shadow:0 1px 4px rgba(0,0,0,.04),0 4px 16px rgba(0,0,0,.03)}
+.card-label{font-size:11px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:#1a3a6a;margin-bottom:14px;display:flex;align-items:center;gap:10px}
+.card-label::before{content:'';display:inline-block;width:4px;height:18px;background:linear-gradient(180deg,#1a3a6a,#3a6fbf);border-radius:2px;flex-shrink:0}
+.card p,.card .body-text{font-size:15px;line-height:1.85;color:#3d3d3d}
+
+/* KEY FINDINGS */
+.findings-grid{display:grid;grid-template-columns:1fr;gap:20px;margin-bottom:24px}
+.finding-card{background:linear-gradient(135deg,#0f2544,#1a3a6a);border-radius:12px;padding:36px 40px;position:relative;overflow:hidden}
+.finding-card::before{content:'';position:absolute;top:-20px;right:-20px;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,.03)}
+.finding-number{font-family:'DM Serif Display',serif;font-size:48px;color:rgba(255,255,255,.1);position:absolute;top:16px;right:28px;line-height:1}
+.finding-card .card-label{color:rgba(168,196,224,.85)}
+.finding-card .card-label::before{background:linear-gradient(180deg,rgba(168,196,224,.6),rgba(168,196,224,.25))}
+.finding-card p{color:rgba(255,255,255,.88);font-size:15px;line-height:1.85}
+
+/* PAIN POINTS */
+.pain-card{border-left:4px solid #c48a3f;background:linear-gradient(135deg,#fffcf7,#fff9f0)}
+.pain-card .card-label{color:#8b6023}
+.pain-card .card-label::before{background:linear-gradient(180deg,#c48a3f,#d4a55a)}
+
+/* VERBATIM */
+.verbatim-block{background:#f7f9fc;border-left:3px solid #c0cfdf;border-radius:0 8px 8px 0;padding:20px 24px;margin-bottom:14px}
+.verbatim-block:last-child{margin-bottom:0}
+.verbatim-block p{font-style:italic;color:#445;font-size:14.5px;line-height:1.8}
+.verbatim-block p::before{content:'\201C';font-family:'DM Serif Display',serif;font-size:22px;color:#9ab;margin-right:2px}
+.verbatim-block p::after{content:'\201D';font-family:'DM Serif Display',serif;font-size:22px;color:#9ab;margin-left:1px}
+
+/* RECOMMENDATIONS */
+.rec-item{border:1px solid #dde3ee;border-radius:10px;padding:24px 28px;margin-bottom:14px;background:linear-gradient(135deg,#fafbfd,#f6f8fb);position:relative;padding-left:52px}
+.rec-item::before{content:'→';position:absolute;left:24px;top:24px;color:#1a3a6a;font-size:18px;font-weight:700}
+.rec-item:last-child{margin-bottom:0}
+.rec-item p{font-size:15px;color:#2a3a50;line-height:1.8}
+
+/* SECTION DIVIDER */
+.section-divider{display:flex;align-items:center;gap:16px;margin:40px 0 28px}
+.section-divider span{font-family:'DM Serif Display',serif;font-size:20px;color:#1a3a6a;white-space:nowrap}
+.section-divider::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,#d0d8e4,transparent)}
+
+/* FOOTER */
+.footer{text-align:center;padding:36px 20px 12px;color:#a0a8b4;font-size:11.5px;letter-spacing:.3px}
+.footer strong{color:#8090a4;font-weight:500}
+
+/* RESPONSIVE */
+@media(max-width:640px){
+  .hero{padding:40px 28px 36px}
+  .hero h1{font-size:26px}
+  .card{padding:28px 24px}
+  .finding-card{padding:28px 24px}
+  .rec-item{padding-left:44px}
+  .rec-item::before{left:18px}
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+<!-- HERO -->
+<div class="hero fade-section">
+  <p class="hero-eyebrow">AI-Powered Market Research Analytics</p>
+  <h1>U.S. Automotive Purchase Study 2026</h1>
+  <div class="hero-divider"></div>
+  <p class="hero-meta">Prepared by <strong>Debbie</strong> &nbsp;·&nbsp; March 2026 &nbsp;·&nbsp; n=1,000</p>
+</div>
+
+<!-- SAMPLE OVERVIEW -->
+<div class="card fade-section">
+  <div class="card-label">Sample Overview</div>
+  <p>The study captures a broad U.S. adult sample spanning all age groups, with the largest concentration in the 25-44 cohort at 42% combined. Respondents reflect a diverse mix of purchase intentions, budget ranges, and financing preferences, providing a robust foundation for strategic insights.</p>
+</div>
+
+<!-- AGE DISTRIBUTION -->
+<div class="card fade-section">
+  <div class="card-label">Age Distribution Insight</div>
+  <p>The 25-34 and 35-44 segments are the dominant buyer groups at 22% and 20% respectively, representing core household formation and family vehicle purchasing life stages. Younger buyers aged 18-24 and older buyers 65 plus each represent 12%, indicating meaningful opportunity at both ends of the age spectrum.</p>
+</div>
+
+<!-- NEW VS USED -->
+<div class="card fade-section">
+  <div class="card-label">New Vs Used Insight</div>
+  <p>Flexibility dominates purchase intent, with 45% of respondents open to both new and used vehicles, suggesting price and value are more decisive than newness alone. Dealerships and platforms that surface both inventory types together are well-positioned to capture this majority segment.</p>
+</div>
+
+<!-- BUDGET -->
+<div class="card fade-section">
+  <div class="card-label">Budget Insight</div>
+  <p>The $25-34.9K range leads at 24%, closely followed by $15-24.9K at 22%, placing the sweet spot of consumer budgets firmly in the $15K-$35K corridor. Premium segments above $50K represent a combined 19%, signaling a meaningful but smaller luxury-oriented audience.</p>
+</div>
+
+<!-- FINANCING -->
+<div class="card fade-section">
+  <div class="card-label">Financing Insight</div>
+  <p>Bank loans are the preferred financing method at 38%, reflecting consumer desire for pre-arranged, independent financing before entering the dealership. Dealership financing still commands 25%, indicating the F&I office remains a relevant but increasingly competitive touchpoint.</p>
+</div>
+
+<!-- POWERTRAIN -->
+<div class="card fade-section">
+  <div class="card-label">Powertrain Insight</div>
+  <p>Gasoline powertrains retain a strong plurality at 45%, but electrified options combined including hybrid, PHEV, and EV account for 45% collectively, signaling a market at an inflection point. EV adoption at 13% lags hybrid at 22%, suggesting range anxiety and infrastructure concerns may still be moderating full EV commitment.</p>
+</div>
+
+<!-- BODY STYLE -->
+<div class="card fade-section">
+  <div class="card-label">Body Style Insight</div>
+  <p>SUVs and crossovers together command 52% of body style preference, confirming the ongoing dominance of utility-oriented vehicles in the U.S. market. Trucks remain strong at 18%, while traditional sedans continue their structural decline at 14%.</p>
+</div>
+
+<!-- PAIN POINTS -->
+<div class="card pain-card fade-section">
+  <div class="card-label">Pain Points Insight</div>
+  <p>Price negotiation is the leading frustration at 28%, followed closely by fee transparency at 22%, together accounting for half of all reported pain points. This strongly signals that opaque pricing practices are the single greatest barrier to a positive purchase experience. Only 3% report no frustration, confirming that friction in the buying process is nearly universal.</p>
+</div>
+
+<!-- KEY FINDINGS DIVIDER -->
+<div class="section-divider fade-section"><span>Key Findings</span></div>
+
+<!-- KEY FINDING 1 -->
+<div class="finding-card fade-section">
+  <div class="finding-number">01</div>
+  <div class="card-label">Key Finding 1</div>
+  <p>Pricing opacity is the dominant consumer pain point, with 50% of respondents frustrated by negotiation dynamics and hidden fees, making transparent all-in pricing a critical competitive differentiator.</p>
+</div>
+
+<!-- KEY FINDING 2 -->
+<div class="finding-card fade-section">
+  <div class="finding-number">02</div>
+  <div class="card-label">Key Finding 2</div>
+  <p>The electrification tipping point is approaching, with 45% of buyers considering an electrified powertrain, yet gasoline still leads individually, suggesting the market is in active transition rather than transformation.</p>
+</div>
+
+<!-- KEY FINDING 3 -->
+<div class="finding-card fade-section">
+  <div class="finding-number">03</div>
+  <div class="card-label">Key Finding 3</div>
+  <p>Digital purchase completion is an emerging consumer expectation, as verbatim feedback reflects strong demand for end-to-end online buying capability with reduced in-person pressure.</p>
+</div>
+
+<!-- VERBATIM DIVIDER -->
+<div class="section-divider fade-section"><span>Verbatim Highlights</span></div>
+
+<!-- VERBATIMS -->
+<div class="card fade-section">
+  <div class="card-label">Verbatim Highlights</div>
+  <div class="verbatim-block">
+    <p>More transparent pricing upfront would make a huge difference. I hate being surprised by fees at the dealership.</p>
+  </div>
+  <div class="verbatim-block">
+    <p>Fixed pricing like Tesla does it — no negotiation, no games.</p>
+  </div>
+  <div class="verbatim-block">
+    <p>Less pressure from sales staff. I want time to think without someone hovering over me.</p>
+  </div>
+  <div class="verbatim-block">
+    <p>The ability to fully complete the purchase online without stepping foot in a dealership.</p>
+  </div>
+  <div class="verbatim-block">
+    <p>More honest trade-in appraisals. I always feel like I am getting lowballed.</p>
+  </div>
+</div>
+
+<!-- RECOMMENDATIONS DIVIDER -->
+<div class="section-divider fade-section"><span>Strategic Recommendations</span></div>
+
+<!-- RECOMMENDATIONS -->
+<div class="card fade-section">
+  <div class="card-label">Strategic Recommendations</div>
+  <div class="rec-item">
+    <p>Adopt and prominently market an all-in transparent pricing model that eliminates surprise fees and reduces negotiation friction to directly address the top two consumer pain points.</p>
+  </div>
+  <div class="rec-item">
+    <p>Develop a seamless omnichannel purchase experience that allows consumers to complete financing, trade-in appraisal, and final purchase steps entirely online to meet growing digital expectations.</p>
+  </div>
+  <div class="rec-item">
+    <p>Expand and clearly communicate electrified vehicle inventory and education tools targeting the 35-54 core buyer segment to convert hybrid interest into PHEV and EV consideration.</p>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div class="footer fade-section">
+  Designed by <strong>Vera</strong> &nbsp;|&nbsp; Debbie AI Market Research System &nbsp;|&nbsp; Confidential
+</div>
+
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded',function(){
+  var sections=document.querySelectorAll('.fade-section');
+  if('IntersectionObserver' in window){
+    var observer=new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if(entry.isIntersecting){
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    },{threshold:0.12,rootMargin:'0px 0px -40px 0px'});
+    sections.forEach(function(s){observer.observe(s)});
+  }else{
+    sections.forEach(function(s){s.classList.add('visible')});
+  }
+});
+</script>
+</body>
+</html>
