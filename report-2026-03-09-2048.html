@@ -1,0 +1,67 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Debbie – Market Research Report</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #0f1117;
+    color: #e2e8f0;
+    min-height: 100vh;
+  }
+
+  /* ── Header ── */
+  .header {
+    background: linear-gradient(135deg, #1a1d2e 0%, #16213e 50%, #0f3460 100%);
+    border-bottom: 1px solid rgba(99,179,237,0.2);
+    padding: 28px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  .header-left { display: flex; align-items: center; gap: 16px; }
+  .logo-badge {
+    width: 48px; height: 48px;
+    background: linear-gradient(135deg, #63b3ed, #4299e1);
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; font-weight: 700; color: #fff;
+    box-shadow: 0 0 20px rgba(99,179,237,0.4);
+  }
+  .header-title { font-size: 22px; font-weight: 700; color: #fff; }
+  .header-sub   { font-size: 13px; color: #90cdf4; margin-top: 2px; }
+  .header-meta  { text-align: right; font-size: 12px; color: #718096; line-height: 1.7; }
+  .status-pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(72,187,120,0.15); border: 1px solid rgba(72,187,120,0.4);
+    color: #68d391; border-radius: 20px; padding: 4px 12px; font-size: 11px; font-weight: 600;
+  }
+  .status-dot { width: 6px; height: 6px; border-radius: 50%; background: #68d391; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+
+  /* ── Layout ── */
+  .container { max-width: 1300px; margin: 0 auto; padding: 36px 24px; }
+
+  .section-title {
+    font-size: 11px; font-weight: 700; letter-spacing: .12em;
+    text-transform: uppercase; color: #63b3ed; margin-bottom: 18px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .section-title::after { content:''; flex:1; height:1px; background:rgba(99,179,237,.2); }
+
+  /* ── KPI Row ── */
+  .kpi-row { display: grid; grid-template-columns: repeat(auto-fit,minmax(170px,1fr)); gap: 16px; margin-bottom: 32px; }
+  .kpi-card {
+    background: linear-gradient(135deg,#1a1d2e,#16213e);
+    border: 1px solid rgba(99,179,237,.15); border-radius: 14px;
+    padding: 20px 18px; text-align: center;
+  
